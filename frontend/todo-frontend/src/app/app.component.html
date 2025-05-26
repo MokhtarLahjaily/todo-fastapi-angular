@@ -1,0 +1,27 @@
+<!-- Header -->
+<mat-toolbar color="primary">
+  <span>Todo App</span>
+</mat-toolbar>
+
+<!-- Main Content -->
+<div class="container">
+  <mat-card class="todo-card">
+    <mat-card-header>
+      <mat-card-title>Todo List</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Todo Form -->
+      <app-todo-form (addTodo)="onAddTodo($event)"></app-todo-form>
+
+      <!-- Todo Stats -->
+      <app-todo-stats [stats]="stats"></app-todo-stats>
+
+      <!-- Todo List -->
+      <app-todo-list
+        [todos]="todos"
+        (toggleComplete)="onToggleComplete($event)"
+        (delete)="onDeleteTodo($event)">
+      </app-todo-list>
+    </mat-card-content>
+  </mat-card>
+</div>

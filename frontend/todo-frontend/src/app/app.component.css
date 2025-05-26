@@ -1,0 +1,52 @@
+.spacer {
+    flex: 1 1 auto;
+  }
+  
+  .app-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .stats-section {
+    margin-bottom: 20px;
+  }
+  
+  .form-section {
+    margin-bottom: 20px;
+  }
+  
+  .list-section {
+    flex: 1;
+  }
+  
+  @media (max-width: 768px) {
+    .app-container {
+      margin: 10px auto;
+      padding: 0 10px;
+    }
+  
+    .main-content {
+      gap: 15px;
+    }
+  }
+
+  mat-toolbar {
+    margin-bottom: 20px;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+
+  .todo-card {
+    margin-top: 20px;
+  }

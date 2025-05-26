@@ -1,0 +1,66 @@
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>list</mat-icon>
+        Mes Tâches
+      </mat-card-title>
+      <div class="header-actions">
+        <!-- Filtres -->
+        <div class="filter-chips">
+          <mat-chip-listbox aria-label="Filtres">
+            <mat-chip-option 
+              [selected]="currentFilter === 'all'"
+              (click)="onFilterChange('all')">
+              Toutes
+            </mat-chip-option>
+            <mat-chip-option 
+              [selected]="currentFilter === 'pending'"
+              (click)="onFilterChange('pending')">
+              En cours
+            </mat-chip-option>
+            <mat-chip-option 
+              [selected]="currentFilter === 'completed'"
+              (click)="onFilterChange('completed')">
+              Terminées
+            </mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+      </div>
+    </mat-card-header>
+  
+    <mat-card-content>
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Chargement des tâches...</p>
+      </div>
+  
+      <!-- Liste des todos -->
+      <div *ngIf="!loading" class="todos-container">
+        <div *ngIf="(todos$ | async)?.length === 0" class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <h3>Aucune tâche trouvée</h3>
+          <p *ngIf="currentFilter === 'all'">Commencez par ajouter votre première tâche !</p>
+          <p *ngIf="currentFilter === 'pending'">Toutes vos tâches sont terminées ! 🎉</p>
+          <p *ngIf="currentFilter === 'completed'">Aucune tâche terminée pour le moment.</p>
+        </div>
+  
+        <div *ngIf="(todos$ | async) as todos" class="todo-list">
+          <div *ngFor="let todo of todos" class="todo-item" [class.completed]="todo.completed">
+            <div class="todo-content">
+              <input
+                type="checkbox"
+                [checked]="todo.completed"
+                (change)="onToggleComplete(todo)"
+              />
+              <div class="todo-text">
+                <span class="todo-title">{{ todo.title }}</span>
+                <span *ngIf="todo.description" class="todo-description">{{ todo.description }}</span>
+              </div>
+            </div>
+            <button class="btn btn-danger" (click)="onDelete(todo)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>

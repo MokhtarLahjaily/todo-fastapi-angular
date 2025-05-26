@@ -1,0 +1,105 @@
+.stats-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+  }
+  
+  .loading {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+  
+  .stat-card {
+    transition: transform 0.2s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .stat-card.total {
+    border-left: 4px solid #2196F3;
+  }
+  
+  .stat-card.pending {
+    border-left: 4px solid #FF9800;
+  }
+  
+  .stat-card.completed {
+    border-left: 4px solid #4CAF50;
+  }
+  
+  .stat-card.progress {
+    border-left: 4px solid #9C27B0;
+  }
+  
+  .stat-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .stat-content mat-icon {
+    font-size: 2em;
+    height: 2em;
+    width: 2em;
+    opacity: 0.7;
+  }
+  
+  .total mat-icon { color: #2196F3; }
+  .pending mat-icon { color: #FF9800; }
+  .completed mat-icon { color: #4CAF50; }
+  .progress mat-icon { color: #9C27B0; }
+  
+  .stat-info {
+    flex: 1;
+  }
+  
+  .stat-number {
+    font-size: 1.8em;
+    font-weight: bold;
+    line-height: 1;
+  }
+  
+  .stat-label {
+    color: #666;
+    font-size: 0.9em;
+    margin-top: 2px;
+  }
+  
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  @media (max-width: 768px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
