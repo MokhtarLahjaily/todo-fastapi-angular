@@ -1,67 +1,83 @@
 <!-- Header -->
-<mat-toolbar color="primary">
-  <span>Todo App</span>
-  <button mat-icon-button (click)="toggleDarkMode()" class="dark-mode-toggle" matTooltip="Changer le thème">
-    <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
-  </button>
+<mat-toolbar color="primary" class="main-toolbar">
+  <div class="toolbar-content">
+    <div class="toolbar-left">
+      <mat-icon class="app-icon">check_circle</mat-icon>
+      <span class="app-title">Todo App</span>
+    </div>
+    <button mat-icon-button (click)="toggleDarkMode()" class="dark-mode-toggle" matTooltip="Changer le thème">
+      <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+  </div>
 </mat-toolbar>
 
 <!-- Main Content -->
 <div class="app-container" [class.dark-theme]="isDarkMode">
-  <header class="app-header">
-    <h1>{{ title }}</h1>
-  </header>
+  <div class="app-layout">
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Stats Section -->
+      <div class="stats-container">
+        <mat-card class="stats-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon class="stats-icon">analytics</mat-icon>
+              Vue d'ensemble
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <div class="stat-icon-container">
+                  <mat-icon class="stat-icon">list_alt</mat-icon>
+                </div>
+                <span class="stat-value">{{ stats.total }}</span>
+                <span class="stat-label">Total des tâches</span>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon-container">
+                  <mat-icon class="stat-icon">pending_actions</mat-icon>
+                </div>
+                <span class="stat-value">{{ stats.pending }}</span>
+                <span class="stat-label">En cours</span>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon-container">
+                  <mat-icon class="stat-icon">task_alt</mat-icon>
+                </div>
+                <span class="stat-value">{{ stats.completed }}</span>
+                <span class="stat-label">Terminées</span>
+              </div>
+              <div class="stat-item">
+                <div class="stat-icon-container">
+                  <mat-icon class="stat-icon">trending_up</mat-icon>
+                </div>
+                <span class="stat-value">{{ stats.completion_rate }}%</span>
+                <span class="stat-label">Taux de complétion</span>
+                <div class="stat-progress">
+                  <mat-progress-bar
+                    mode="determinate"
+                    [value]="stats.completion_rate"
+                    color="primary"
+                  ></mat-progress-bar>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
 
-  <main class="app-content">
-    <!-- Stats Section -->
-    <mat-card class="stats-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon class="stats-icon">analytics</mat-icon>
-          Statistiques
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <mat-icon class="stat-icon">list_alt</mat-icon>
-            <span class="stat-label">Total des tâches</span>
-            <span class="stat-value">{{ stats.total }}</span>
-          </div>
-          <div class="stat-item">
-            <mat-icon class="stat-icon">pending_actions</mat-icon>
-            <span class="stat-label">En cours</span>
-            <span class="stat-value">{{ stats.pending }}</span>
-          </div>
-          <div class="stat-item">
-            <mat-icon class="stat-icon">task_alt</mat-icon>
-            <span class="stat-label">Terminées</span>
-            <span class="stat-value">{{ stats.completed }}</span>
-          </div>
-          <div class="stat-item">
-            <mat-icon class="stat-icon">trending_up</mat-icon>
-            <span class="stat-label">Taux de complétion</span>
-            <mat-progress-bar
-              mode="determinate"
-              [value]="stats.completion_rate"
-              color="primary"
-            ></mat-progress-bar>
-            <span class="stat-value">{{ stats.completion_rate }}%</span>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <app-todo-form (create)="onAddTodo($event)"></app-todo-form>
-
-    <div class="todos-container">
-      <app-todo-list
-        [todos]="todos"
-        (todoDeleted)="onTodoDeleted()"
-        (todoUpdated)="onTodoUpdated()"
-      ></app-todo-list>
-    </div>
-  </main>
+      <!-- Todo List Section -->
+      <div class="todos-container">
+        <app-todo-list
+          [todos]="todos"
+          (todoDeleted)="onTodoDeleted()"
+          (todoUpdated)="onTodoUpdated()"
+          (todoAdded)="onTodoAdded($event)">
+        </app-todo-list>
+      </div>
+    </main>
+  </div>
 </div>
 
 <!-- Boîte de dialogue de confirmation -->

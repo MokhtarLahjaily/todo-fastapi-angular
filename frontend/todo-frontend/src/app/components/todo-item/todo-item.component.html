@@ -1,93 +1,46 @@
 <div class="todo-item" [class.completed]="todo.completed">
-  <div class="todo-content" *ngIf="!isEditing">
-    <div class="todo-header">
-      <input
-        type="checkbox"
-        [checked]="todo.completed"
-        (change)="toggleComplete()"
-        class="todo-checkbox"
-      />
-      <h3 class="todo-title">{{ todo.title }}</h3>
-      <span class="todo-priority" [class]="todo.priority.toLowerCase()">
-        {{ todo.priority }}
-      </span>
-    </div>
+  <div class="todo-content">
+    <mat-checkbox
+      [checked]="todo.completed"
+      (change)="onToggleComplete()"
+      color="primary"
+      class="todo-checkbox"
+    ></mat-checkbox>
 
-    <p class="todo-description" *ngIf="todo.description">
-      {{ todo.description }}
-    </p>
+    <div class="todo-details">
+      <h3 class="todo-title" [class.completed]="todo.completed">
+        {{ todo.title }}
+      </h3>
+      
+      <p class="todo-description" *ngIf="todo.description">
+        {{ todo.description }}
+      </p>
 
-    <div class="todo-meta">
-      <span class="todo-category" *ngIf="todo.category">
-        Category: {{ todo.category }}
-      </span>
-      <span class="todo-due-date" *ngIf="todo.due_date">
-        Due: {{ todo.due_date | date:'medium' }}
-      </span>
-    </div>
+      <div class="todo-meta">
+        <mat-chip *ngIf="todo.due_date" class="due-date-chip">
+          <mat-icon class="chip-icon">event</mat-icon>
+          {{ todo.due_date | date:'dd/MM/yyyy' }}
+        </mat-chip>
 
-    <div class="todo-actions">
-      <button class="btn btn-edit" (click)="toggleEdit()">Edit</button>
-      <button class="btn btn-delete" (click)="onDelete()">Delete</button>
+        <mat-chip [class]="'priority-chip ' + todo.priority.toLowerCase()">
+          <mat-icon class="chip-icon">flag</mat-icon>
+          {{ todo.priority }}
+        </mat-chip>
+
+        <mat-chip *ngIf="todo.completed" class="completed-chip">
+          <mat-icon class="chip-icon">check_circle</mat-icon>
+          Terminée
+        </mat-chip>
+      </div>
     </div>
   </div>
 
-  <form [formGroup]="editForm" (ngSubmit)="onSave()" class="edit-form" *ngIf="isEditing">
-    <div class="form-group">
-      <label for="edit-title">Title</label>
-      <input
-        type="text"
-        id="edit-title"
-        formControlName="title"
-        class="form-control"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="edit-description">Description</label>
-      <textarea
-        id="edit-description"
-        formControlName="description"
-        class="form-control"
-      ></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="edit-dueDate">Due Date</label>
-      <input
-        type="datetime-local"
-        id="edit-dueDate"
-        formControlName="dueDate"
-        class="form-control"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="edit-priority">Priority</label>
-      <select id="edit-priority" formControlName="priority" class="form-control">
-        <option *ngFor="let priority of priorities" [value]="priority">
-          {{ priority }}
-        </option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="edit-category">Category</label>
-      <input
-        type="text"
-        id="edit-category"
-        formControlName="category"
-        class="form-control"
-      />
-    </div>
-
-    <div class="form-actions">
-      <button type="submit" class="btn btn-save" [disabled]="!editForm.valid">
-        Save
-      </button>
-      <button type="button" class="btn btn-cancel" (click)="toggleEdit()">
-        Cancel
-      </button>
-    </div>
-  </form>
+  <div class="todo-actions">
+    <button mat-icon-button (click)="onEdit()" class="edit-button">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onDelete()" class="delete-button">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
 </div>

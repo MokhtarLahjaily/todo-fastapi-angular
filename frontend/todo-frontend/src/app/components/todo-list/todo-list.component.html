@@ -1,66 +1,49 @@
-<mat-card [class.dark-theme]="isDarkMode">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>list</mat-icon>
-        Mes Tâches
-      </mat-card-title>
-      <div class="header-actions">
-        <!-- Filtres -->
-        <div class="filter-chips">
-          <mat-chip-listbox aria-label="Filtres">
-            <mat-chip-option 
-              [selected]="currentFilter === 'all'"
-              (click)="onFilterChange('all')">
-              Toutes
-            </mat-chip-option>
-            <mat-chip-option 
-              [selected]="currentFilter === 'pending'"
-              (click)="onFilterChange('pending')">
-              En cours
-            </mat-chip-option>
-            <mat-chip-option 
-              [selected]="currentFilter === 'completed'"
-              (click)="onFilterChange('completed')">
-              Terminées
-            </mat-chip-option>
-          </mat-chip-listbox>
-        </div>
+<div class="todo-container">
+  <div class="todo-header">
+    <h2>Mes tâches</h2>
+    <div class="filters">
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Filtrer</mat-label>
+        <mat-select [(ngModel)]="currentFilter" (selectionChange)="onFilterChange($event.value)">
+          <mat-option value="all">Toutes</mat-option>
+          <mat-option value="pending">En cours</mat-option>
+          <mat-option value="completed">Terminées</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <!-- Tri -->
-        <mat-form-field class="sort-field">
-          <mat-label>Trier par</mat-label>
-          <mat-select [(value)]="sortBy" (selectionChange)="onSortChange()">
-            <mat-option value="dueDate">Date d'échéance</mat-option>
-            <mat-option value="priority">Priorité</mat-option>
-            <mat-option value="createdAt">Date de création</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="sort-field">
+        <mat-label>Trier par</mat-label>
+        <mat-select [(ngModel)]="sortValue" (selectionChange)="onSortChange()">
+          <mat-option *ngFor="let option of sortOptions" [value]="option.value">
+            {{ option.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="todo-grid">
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <ng-container *ngIf="!loading">
+      <div *ngIf="filteredTodos.length === 0" class="no-todos">
+        <mat-icon>assignment</mat-icon>
+        <p>Aucune tâche trouvée. Commencez par ajouter votre première tâche !</p>
       </div>
-    </mat-card-header>
-  
-    <mat-card-content>
-      <!-- Loading -->
-      <div *ngIf="loading" class="loading-container">
-        <mat-spinner diameter="40"></mat-spinner>
-        <p>Chargement des tâches...</p>
-      </div>
-  
-      <!-- Liste des todos -->
-      <div *ngIf="!loading" class="todo-list">
-        <div *ngIf="filteredTodos.length === 0" class="no-todos">
-          <p *ngIf="currentFilter === 'all'">Aucune tâche trouvée. Commencez par ajouter votre première tâche !</p>
-          <p *ngIf="currentFilter === 'pending'">Toutes vos tâches sont terminées ! 🎉</p>
-          <p *ngIf="currentFilter === 'completed'">Aucune tâche terminée pour le moment.</p>
-        </div>
-  
-        <div *ngIf="filteredTodos.length > 0" class="todos-container">
-          <app-todo-item
-            *ngFor="let todo of filteredTodos"
-            [todo]="todo"
-            (todoDeleted)="todoDeleted.emit()"
-            (todoUpdated)="todoUpdated.emit()"
-          ></app-todo-item>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+
+      <app-todo-item
+        *ngFor="let todo of filteredTodos"
+        [todo]="todo"
+        (todoDeleted)="onTodoDeleted()"
+        (todoUpdated)="onTodoUpdated()">
+      </app-todo-item>
+    </ng-container>
+  </div>
+</div>
+
+<!-- Bouton d'ajout -->
+<button mat-fab color="primary" class="add-todo-fab" (click)="toggleForm()" matTooltip="Ajouter une tâche">
+  <mat-icon>add</mat-icon>
+</button>

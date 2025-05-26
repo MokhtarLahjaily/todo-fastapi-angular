@@ -1,10 +1,90 @@
 .todo-form {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.dialog-icon {
+  margin-right: 8px;
+  vertical-align: middle;
+  color: var(--primary-color);
+}
+
+mat-dialog-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  color: var(--text-color);
+}
+
+mat-dialog-content {
+  min-width: 400px;
+}
+
+mat-dialog-actions {
+  padding: 16px 0 0;
+  margin: 0;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-row mat-form-field {
+  flex: 1;
+  min-width: 200px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+@media (max-width: 768px) {
+  .todo-form {
+    padding: 12px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-row mat-form-field {
+    width: 100%;
+  }
+}
+
+/* Dark theme support */
+:host-context(.dark-theme) {
+  .todo-form {
+    background-color: var(--card-background);
+  }
+
+  mat-dialog-title {
+    color: var(--text-color);
+  }
+
+  ::ng-deep .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      background-color: var(--stat-item-background);
+    }
+
+    .mat-mdc-form-field-label {
+      color: var(--text-secondary);
+    }
+
+    .mat-mdc-input-element {
+      color: var(--text-color);
+    }
+  }
 }
 
 .form-title {
@@ -17,15 +97,6 @@
 
 .form-title mat-icon {
   color: #3498db;
-}
-
-.form-row {
-  display: flex;
-  gap: 16px;
-}
-
-.form-field {
-  flex: 1;
 }
 
 /* Style pour les champs de formulaire */
@@ -77,22 +148,6 @@
   font-size: 16px;
   width: 16px;
   height: 16px;
-}
-
-@media (max-width: 768px) {
-  .form-row {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .title-field,
-  .description-field {
-    width: 100%;
-  }
-
-  .submit-btn {
-    width: 100%;
-  }
 }
 
 .form-group {
@@ -151,27 +206,4 @@ textarea.form-control {
 .btn-primary:disabled {
   background-color: #ccc;
   cursor: not-allowed;
-}
-
-/* Dark mode specific styles */
-:host-context(.dark-theme) {
-  .todo-form {
-    background-color: #424242;
-  }
-
-  ::ng-deep {
-    .mat-mdc-form-field {
-      .mat-mdc-text-field-wrapper {
-        background-color: #303030;
-      }
-
-      .mat-mdc-form-field-label {
-        color: rgba(255, 255, 255, 0.7);
-      }
-
-      .mat-mdc-input-element {
-        color: #ffffff;
-      }
-    }
-  }
 }

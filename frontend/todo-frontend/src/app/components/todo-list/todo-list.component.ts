@@ -1,26 +1,49 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Todo, Priority } from '../../models/todo.model';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatFabButton } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Todo, TodoCreate } from '../../models/todo.model';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
+import { TodoFormComponent } from '../todo-form/todo-form.component';
+import { TodoService } from '../../services/todo.service';
+
+interface SortOption {
+  value: string;
+  label: string;
+}
+
+type PriorityLevel = 'high' | 'medium' | 'low';
 
 @Component({
   selector: 'app-todo-list',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     TodoItemComponent,
+    TodoFormComponent,
     MatChipsModule,
     MatCardModule,
     MatIconModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressBarModule,
+    MatFabButton,
+    MatDialogModule
   ],
   templateUrl: './todo-list.component.html',
   styleUrls: ['./todo-list.component.css']
@@ -29,28 +52,108 @@ export class TodoListComponent implements OnInit {
   @Input() todos: Todo[] = [];
   @Output() todoDeleted = new EventEmitter<void>();
   @Output() todoUpdated = new EventEmitter<void>();
+  @Output() todoAdded = new EventEmitter<Todo>();
 
-  currentFilter: 'all' | 'pending' | 'completed' = 'all';
-  sortBy: 'dueDate' | 'priority' | 'createdAt' = 'dueDate';
-  loading = false;
+  currentFilter: string = 'all';
+  sortValue: string = 'created_at';
+  loading = true;
   filteredTodos: Todo[] = [];
   isDarkMode = false;
+  filterValue = '';
+  showForm = false;
+  sortOptions: SortOption[] = [
+    { value: 'created_at', label: 'Date de création' },
+    { value: 'due_date', label: 'Date d\'échéance' },
+    { value: 'priority', label: 'Priorité' }
+  ];
 
-  ngOnInit() {
-    this.applyFilterAndSort();
+  constructor(
+    private todoService: TodoService,
+    private dialog: MatDialog,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
+
+  ngOnInit(): void {
+    this.loadTodos();
     this.checkDarkMode();
   }
 
-  ngOnChanges() {
-    this.applyFilterAndSort();
+  toggleForm(): void {
+    const dialogRef = this.dialog.open(TodoFormComponent, {
+      width: '500px',
+      maxHeight: '90vh',
+      panelClass: this.isDarkMode ? 'dark-theme' : '',
+      disableClose: false,
+      autoFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.onTodoAdded(result);
+      }
+    });
   }
 
-  private checkDarkMode() {
-    this.isDarkMode = document.body.classList.contains('dark-theme');
+  onTodoAdded(todo: TodoCreate): void {
+    this.todoService.createTodo(todo).subscribe({
+      next: (newTodo) => {
+        this.todos = [...this.todos, newTodo];
+        this.applyFilterAndSort();
+        this.todoAdded.emit(newTodo);
+      },
+      error: (error) => {
+        console.error('Error adding todo:', error);
+      }
+    });
   }
 
-  onFilterChange(filter: 'all' | 'pending' | 'completed'): void {
-    this.currentFilter = filter;
+  loadTodos(): void {
+    this.loading = true;
+    this.todoService.getTodos().subscribe({
+      next: (todos) => {
+        this.todos = todos;
+        this.applyFilterAndSort();
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error loading todos:', error);
+        this.loading = false;
+      }
+    });
+  }
+
+  applyFilterAndSort(): void {
+    let filtered = [...this.todos];
+
+    // Appliquer le filtre
+    if (this.currentFilter === 'pending') {
+      filtered = filtered.filter(todo => !todo.completed);
+    } else if (this.currentFilter === 'completed') {
+      filtered = filtered.filter(todo => todo.completed);
+    }
+
+    // Appliquer le tri
+    filtered.sort((a, b) => {
+      switch (this.sortValue) {
+        case 'created_at':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'due_date':
+          if (!a.due_date) return 1;
+          if (!b.due_date) return -1;
+          return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+        case 'priority':
+          const priorityOrder = { HIGH: 0, MEDIUM: 1, LOW: 2 };
+          return priorityOrder[a.priority] - priorityOrder[b.priority];
+        default:
+          return 0;
+      }
+    });
+
+    this.filteredTodos = filtered;
+  }
+
+  onFilterChange(value: string): void {
+    this.currentFilter = value;
     this.applyFilterAndSort();
   }
 
@@ -58,66 +161,31 @@ export class TodoListComponent implements OnInit {
     this.applyFilterAndSort();
   }
 
-  private applyFilterAndSort(): void {
-    // Apply filter
-    this.filteredTodos = this.todos.filter(todo => {
-      switch (this.currentFilter) {
-        case 'pending':
-          return !todo.completed;
-        case 'completed':
-          return todo.completed;
-        default:
-          return true;
-      }
-    });
-
-    // Apply sort
-    this.filteredTodos.sort((a, b) => {
-      switch (this.sortBy) {
-        case 'dueDate':
-          if (!a.due_date) return 1;
-          if (!b.due_date) return -1;
-          return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
-        case 'priority':
-          return this.getPriorityWeight(b.priority) - this.getPriorityWeight(a.priority);
-        case 'createdAt':
-          if (!a.created_at) return 1;
-          if (!b.created_at) return -1;
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        default:
-          return 0;
-      }
-    });
-  }
-
-  private getPriorityWeight(priority: Priority): number {
-    switch (priority) {
-      case Priority.HIGH:
-        return 3;
-      case Priority.MEDIUM:
-        return 2;
-      case Priority.LOW:
-        return 1;
-      default:
-        return 0;
-    }
-  }
-
-  getPriorityLabel(priority: Priority): string {
-    switch (priority) {
-      case Priority.HIGH:
-        return 'Haute';
-      case Priority.MEDIUM:
-        return 'Moyenne';
-      case Priority.LOW:
-        return 'Basse';
-      default:
-        return priority;
+  checkDarkMode(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
   }
 
   isOverdue(todo: Todo): boolean {
     if (!todo.due_date || todo.completed) return false;
     return new Date(todo.due_date) < new Date();
+  }
+
+  onTodoDeleted(): void {
+    this.loadTodos();
+  }
+
+  onTodoUpdated(): void {
+    this.applyFilterAndSort();
+    this.todoUpdated.emit();
+  }
+
+  private updateTodoInList(updatedTodo: Todo): void {
+    const index = this.todos.findIndex(t => t.id === updatedTodo.id);
+    if (index !== -1) {
+      this.todos[index] = updatedTodo;
+      this.applyFilterAndSort();
+    }
   }
 }

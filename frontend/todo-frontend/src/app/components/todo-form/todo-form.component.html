@@ -1,63 +1,45 @@
-<form [formGroup]="todoForm" (ngSubmit)="onSubmit()" class="todo-form">
-  <div class="form-group">
-    <label for="title">Title</label>
-    <input
-      type="text"
-      id="title"
-      formControlName="title"
-      class="form-control"
-      placeholder="Enter todo title"
-    />
-    <div class="error-message" *ngIf="todoForm.get('title')?.errors?.['required'] && todoForm.get('title')?.touched">
-      Title is required
-    </div>
-    <div class="error-message" *ngIf="todoForm.get('title')?.errors?.['minlength'] && todoForm.get('title')?.touched">
-      Title must be at least 3 characters long
-    </div>
-  </div>
+<h2 mat-dialog-title>
+  <mat-icon class="dialog-icon">add_task</mat-icon>
+  Nouvelle tâche
+</h2>
 
-  <div class="form-group">
-    <label for="description">Description</label>
-    <textarea
-      id="description"
-      formControlName="description"
-      class="form-control"
-      placeholder="Enter todo description"
-      rows="3"
-    ></textarea>
-  </div>
+<mat-dialog-content>
+  <form [formGroup]="todoForm" class="todo-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Titre</mat-label>
+      <input matInput formControlName="title" placeholder="Entrez le titre de la tâche">
+      <mat-error *ngIf="todoForm.get('title')?.hasError('required')">
+        Le titre est requis
+      </mat-error>
+    </mat-form-field>
 
-  <div class="form-group">
-    <label for="dueDate">Due Date</label>
-    <input
-      type="datetime-local"
-      id="dueDate"
-      formControlName="dueDate"
-      class="form-control"
-    />
-  </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3" placeholder="Entrez une description (optionnelle)"></textarea>
+    </mat-form-field>
 
-  <div class="form-group">
-    <label for="priority">Priority</label>
-    <select id="priority" formControlName="priority" class="form-control">
-      <option *ngFor="let priority of priorities" [value]="priority">
-        {{ priority }}
-      </option>
-    </select>
-  </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Date d'échéance</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="due_date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
 
-  <div class="form-group">
-    <label for="category">Category</label>
-    <input
-      type="text"
-      id="category"
-      formControlName="category"
-      class="form-control"
-      placeholder="Enter category"
-    />
-  </div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Priorité</mat-label>
+      <mat-select formControlName="priority">
+        <mat-option value="low">Basse</mat-option>
+        <mat-option value="medium">Moyenne</mat-option>
+        <mat-option value="high">Haute</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
 
-  <button type="submit" class="btn btn-primary" [disabled]="!todoForm.valid">
-    Add Todo
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Annuler</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!todoForm.valid">
+    <mat-icon>add</mat-icon>
+    Ajouter
   </button>
-</form>
+</mat-dialog-actions>

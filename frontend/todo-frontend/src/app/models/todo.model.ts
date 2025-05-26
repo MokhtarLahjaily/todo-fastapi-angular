@@ -9,10 +9,10 @@ export interface Todo {
   title: string;
   description?: string;
   completed: boolean;
-  created_at?: Date;
-  updated_at?: Date;
-  due_date?: Date;
   priority: Priority;
+  due_date?: Date | string;
+  created_at: Date | string;
+  updated_at?: Date;
   category?: string;
   is_editing?: boolean;
   last_modified_by?: string;
@@ -23,9 +23,9 @@ export interface Todo {
 export interface TodoCreate {
   title: string;
   description?: string;
-  due_date?: string;
-  priority: 'low' | 'medium' | 'high';
-  category?: string;
+  priority?: Priority;
+  due_date?: string | null;
+  completed?: boolean;
 }
 
 export interface TodoUpdate {
@@ -33,7 +33,7 @@ export interface TodoUpdate {
   description?: string;
   completed?: boolean;
   due_date?: string;
-  priority?: 'low' | 'medium' | 'high';
+  priority?: Priority;
   category?: string;
   position?: number;
 }

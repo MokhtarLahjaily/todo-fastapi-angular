@@ -257,3 +257,101 @@ body {
 .dark-theme .completed .todo-description {
   color: var(--text-secondary);
 }
+
+/* Dialog styles */
+.mat-mdc-dialog-container {
+  --mdc-dialog-container-color: var(--background-color, white);
+}
+
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: 8px;
+  padding: 0;
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-content {
+  max-height: 70vh;
+  padding: 20px 24px;
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-actions {
+  padding: 8px 24px 24px;
+  margin: 0;
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-title {
+  margin: 0;
+  padding: 24px 24px 0;
+  font-size: 20px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+/* Input field styles in dialog */
+.mat-mdc-dialog-container .mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-dialog-container .mat-mdc-text-field-wrapper {
+  background-color: transparent !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-form-field-flex {
+  background-color: transparent !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-input-element {
+  color: var(--text-color, #333333) !important;
+  caret-color: var(--primary-color, #4a90e2) !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-form-field-label {
+  color: var(--text-secondary, #666666) !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-select-value {
+  color: var(--text-color, #333333) !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-select-arrow {
+  color: var(--text-secondary, #666666) !important;
+}
+
+/* Dark theme for dialog */
+.dark-theme .mat-mdc-dialog-container {
+  --mdc-dialog-container-color: #424242;
+  color: white;
+}
+
+.dark-theme .mat-mdc-dialog-container .mat-mdc-dialog-title {
+  color: white;
+}
+
+.dark-theme .mat-mdc-dialog-container .mat-mdc-form-field {
+  color: white;
+}
+
+.dark-theme .mat-mdc-dialog-container .mat-mdc-form-field-label {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.dark-theme .mat-mdc-dialog-container .mat-mdc-input-element {
+  color: white !important;
+  caret-color: var(--primary-color, #64b5f6) !important;
+}
+
+.dark-theme .mat-mdc-dialog-container .mat-mdc-select-value {
+  color: white !important;
+}
+
+.dark-theme .mat-mdc-dialog-container .mat-mdc-select-arrow {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.dark-theme .mat-mdc-dialog-container .mat-mdc-text-field-wrapper {
+  background-color: transparent !important;
+}
+
+.dark-theme .mat-mdc-dialog-container .mat-mdc-form-field-flex {
+  background-color: transparent !important;
+}
