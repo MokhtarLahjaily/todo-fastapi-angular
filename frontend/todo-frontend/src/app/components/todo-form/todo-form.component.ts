@@ -1,41 +1,47 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, NgForm } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { TodoCreate } from '../../models/todo.model';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Todo, Priority } from '../../models/todo.model';
 
 @Component({
   selector: 'app-todo-form',
-  templateUrl: './todo-form.component.html',
-  styleUrls: ['./todo-form.component.css'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule
-  ]
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './todo-form.component.html',
+  styleUrls: ['./todo-form.component.css']
 })
 export class TodoFormComponent {
-  @ViewChild('todoForm') todoForm!: NgForm;
-  @Output() addTodo = new EventEmitter<TodoCreate>();
-  todo: TodoCreate = { title: '', completed: false, description: '' };
-  isSubmitting = false;
+  @Output() create = new EventEmitter<Todo>();
 
-  onSubmit() {
-    if (this.todo.title.trim()) {
-      this.isSubmitting = true;
-      this.addTodo.emit({ ...this.todo });
-      setTimeout(() => {
-        this.todo = { title: '', completed: false, description: '' };
-        this.todoForm.resetForm();
-        this.isSubmitting = false;
-      }, 100);
+  todoForm: FormGroup;
+  priorities = Object.values(Priority);
+
+  constructor(private fb: FormBuilder) {
+    this.todoForm = this.fb.group({
+      title: ['', [Validators.required, Validators.minLength(3)]],
+      description: [''],
+      dueDate: [null],
+      priority: [Priority.MEDIUM],
+      category: ['']
+    });
+  }
+
+  onSubmit(): void {
+    if (this.todoForm.valid) {
+      const formValue = this.todoForm.value;
+      const todo: Todo = {
+        title: formValue.title,
+        description: formValue.description,
+        completed: false,
+        due_date: formValue.dueDate ? new Date(formValue.dueDate) : undefined,
+        priority: formValue.priority,
+        category: formValue.category
+      };
+
+      this.create.emit(todo);
+      this.todoForm.reset({
+        priority: Priority.MEDIUM
+      });
     }
   }
 }

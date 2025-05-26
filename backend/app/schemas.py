@@ -1,26 +1,27 @@
 from pydantic import BaseModel, Field
-from datetime import datetime
 from typing import Optional
+from datetime import datetime
+from .models import PriorityEnum
 
 class TodoBase(BaseModel):
-    title: str = Field(..., min_length=1, max_length=100, description="Titre de la tâche")
-    description: Optional[str] = Field(None, max_length=500, description="Description optionnelle")
-    completed: bool = Field(False, description="Statut de completion")
+    title: str
+    description: Optional[str] = None
+    completed: bool = False
+    due_date: Optional[datetime] = None
+    priority: PriorityEnum = PriorityEnum.MEDIUM
+    category: Optional[str] = None
 
 class TodoCreate(TodoBase):
     pass
 
-class TodoUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=1, max_length=100)
-    description: Optional[str] = Field(None, max_length=500)
+class TodoUpdate(TodoBase):
+    title: Optional[str] = None
     completed: Optional[bool] = None
-    is_editing: Optional[bool] = None
-    last_modified_by: Optional[str] = None
-    version: Optional[int] = None
+    priority: Optional[PriorityEnum] = None
 
 class TodoEdit(BaseModel):
-    is_editing: bool = Field(..., description="État d'édition de la tâche")
-    last_modified_by: Optional[str] = Field(None, description="Identifiant de l'utilisateur qui modifie")
+    is_editing: bool
+    last_modified_by: Optional[str] = None
 
 class TodoResponse(TodoBase):
     id: int
@@ -29,6 +30,7 @@ class TodoResponse(TodoBase):
     is_editing: bool = False
     last_modified_by: Optional[str] = None
     version: int = 1
-    
+    position: int = 0
+
     class Config:
         from_attributes = True

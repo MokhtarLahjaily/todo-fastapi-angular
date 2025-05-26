@@ -1,47 +1,63 @@
-<form (ngSubmit)="onSubmit()" #todoForm="ngForm" class="todo-form">
-  <div class="form-row">
-    <mat-form-field class="title-field" appearance="outline">
-      <mat-label>Nouvelle tâche</mat-label>
-      <input
-        matInput
-        [(ngModel)]="todo.title"
-        name="title"
-        placeholder="Ajouter une nouvelle tâche..."
-        required
-        minlength="1"
-        maxlength="100"
-        #titleInput="ngModel"
-        (keyup.enter)="onSubmit()"
-      />
-      <mat-error *ngIf="titleInput.invalid && (titleInput.dirty || titleInput.touched)">
-        <span *ngIf="titleInput.errors?.['required']">Le titre est requis</span>
-        <span *ngIf="titleInput.errors?.['minlength']">Le titre doit contenir au moins 1 caractère</span>
-        <span *ngIf="titleInput.errors?.['maxlength']">Le titre ne doit pas dépasser 100 caractères</span>
-      </mat-error>
-    </mat-form-field>
-
-    <mat-form-field class="description-field" appearance="outline">
-      <mat-label>Description (optionnelle)</mat-label>
-      <textarea
-        matInput
-        [(ngModel)]="todo.description"
-        name="description"
-        placeholder="Description de la tâche..."
-        maxlength="500"
-        rows="1"
-      ></textarea>
-      <mat-hint align="end">{{ todo.description?.length || 0 }}/500</mat-hint>
-    </mat-form-field>
-
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="!todoForm.form.valid || isSubmitting"
-      class="submit-btn"
-    >
-      <mat-icon>add</mat-icon>
-      {{ isSubmitting ? 'Ajout...' : 'Ajouter' }}
-    </button>
+<form [formGroup]="todoForm" (ngSubmit)="onSubmit()" class="todo-form">
+  <div class="form-group">
+    <label for="title">Title</label>
+    <input
+      type="text"
+      id="title"
+      formControlName="title"
+      class="form-control"
+      placeholder="Enter todo title"
+    />
+    <div class="error-message" *ngIf="todoForm.get('title')?.errors?.['required'] && todoForm.get('title')?.touched">
+      Title is required
+    </div>
+    <div class="error-message" *ngIf="todoForm.get('title')?.errors?.['minlength'] && todoForm.get('title')?.touched">
+      Title must be at least 3 characters long
+    </div>
   </div>
+
+  <div class="form-group">
+    <label for="description">Description</label>
+    <textarea
+      id="description"
+      formControlName="description"
+      class="form-control"
+      placeholder="Enter todo description"
+      rows="3"
+    ></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="dueDate">Due Date</label>
+    <input
+      type="datetime-local"
+      id="dueDate"
+      formControlName="dueDate"
+      class="form-control"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="priority">Priority</label>
+    <select id="priority" formControlName="priority" class="form-control">
+      <option *ngFor="let priority of priorities" [value]="priority">
+        {{ priority }}
+      </option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="category">Category</label>
+    <input
+      type="text"
+      id="category"
+      formControlName="category"
+      class="form-control"
+      placeholder="Enter category"
+    />
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="!todoForm.valid">
+    Add Todo
+  </button>
 </form>

@@ -1,84 +1,123 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule } from '@angular/material/chips';
-import { TodoService } from '../../services/todo.service';
+import { Todo, Priority } from '../../models/todo.model';
 import { TodoItemComponent } from '../todo-item/todo-item.component';
-import { Todo } from '../../models/todo.model';
 
 @Component({
   selector: 'app-todo-list',
-  templateUrl: './todo-list.component.html',
-  styleUrls: ['./todo-list.component.css'],
   standalone: true,
   imports: [
     CommonModule,
+    TodoItemComponent,
+    MatChipsModule,
     MatCardModule,
     MatIconModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatChipsModule,
-    TodoItemComponent
-  ]
+    MatFormFieldModule,
+    MatSelectModule,
+    MatProgressSpinnerModule
+  ],
+  templateUrl: './todo-list.component.html',
+  styleUrls: ['./todo-list.component.css']
 })
 export class TodoListComponent implements OnInit {
   @Input() todos: Todo[] = [];
-  @Output() toggleComplete = new EventEmitter<Todo>();
-  @Output() delete = new EventEmitter<Todo>();
+  @Output() todoDeleted = new EventEmitter<void>();
+  @Output() todoUpdated = new EventEmitter<void>();
 
-  loading = false;
-  error: string | null = null;
-  todos$;
   currentFilter: 'all' | 'pending' | 'completed' = 'all';
+  sortBy: 'dueDate' | 'priority' | 'createdAt' = 'dueDate';
+  loading = false;
+  filteredTodos: Todo[] = [];
+  isDarkMode = false;
 
-  constructor(private todoService: TodoService) {
-    this.todos$ = this.todoService.todos$;
+  ngOnInit() {
+    this.applyFilterAndSort();
+    this.checkDarkMode();
   }
 
-  ngOnInit(): void {
-    this.loadTodos();
+  ngOnChanges() {
+    this.applyFilterAndSort();
   }
 
-  loadTodos(): void {
-    this.loading = true;
-    this.error = null;
-
-    let completed: boolean | undefined;
-    if (this.currentFilter === 'completed') {
-      completed = true;
-    } else if (this.currentFilter === 'pending') {
-      completed = false;
-    }
-
-    this.todoService.loadTodos(completed).subscribe({
-      next: () => {
-        this.loading = false;
-      },
-      error: (error: Error) => {
-        console.error('Erreur chargement:', error);
-        this.error = 'Erreur lors du chargement des tâches';
-        this.loading = false;
-      }
-    });
+  private checkDarkMode() {
+    this.isDarkMode = document.body.classList.contains('dark-theme');
   }
 
   onFilterChange(filter: 'all' | 'pending' | 'completed'): void {
     this.currentFilter = filter;
-    this.loadTodos();
+    this.applyFilterAndSort();
   }
 
-  trackByFn(index: number, todo: Todo): number {
-    return todo.id;
+  onSortChange(): void {
+    this.applyFilterAndSort();
   }
 
-  onToggleComplete(todo: Todo) {
-    this.toggleComplete.emit(todo);
+  private applyFilterAndSort(): void {
+    // Apply filter
+    this.filteredTodos = this.todos.filter(todo => {
+      switch (this.currentFilter) {
+        case 'pending':
+          return !todo.completed;
+        case 'completed':
+          return todo.completed;
+        default:
+          return true;
+      }
+    });
+
+    // Apply sort
+    this.filteredTodos.sort((a, b) => {
+      switch (this.sortBy) {
+        case 'dueDate':
+          if (!a.due_date) return 1;
+          if (!b.due_date) return -1;
+          return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+        case 'priority':
+          return this.getPriorityWeight(b.priority) - this.getPriorityWeight(a.priority);
+        case 'createdAt':
+          if (!a.created_at) return 1;
+          if (!b.created_at) return -1;
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        default:
+          return 0;
+      }
+    });
   }
 
-  onDelete(todo: Todo) {
-    this.delete.emit(todo);
+  private getPriorityWeight(priority: Priority): number {
+    switch (priority) {
+      case Priority.HIGH:
+        return 3;
+      case Priority.MEDIUM:
+        return 2;
+      case Priority.LOW:
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
+  getPriorityLabel(priority: Priority): string {
+    switch (priority) {
+      case Priority.HIGH:
+        return 'Haute';
+      case Priority.MEDIUM:
+        return 'Moyenne';
+      case Priority.LOW:
+        return 'Basse';
+      default:
+        return priority;
+    }
+  }
+
+  isOverdue(todo: Todo): boolean {
+    if (!todo.due_date || todo.completed) return false;
+    return new Date(todo.due_date) < new Date();
   }
 }

@@ -1,109 +1,131 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
 import { TodoService } from '../../services/todo.service';
-import { Todo } from '../../models/todo.model';
+import { Todo, Priority } from '../../models/todo.model';
 
 @Component({
   selector: 'app-todo-item',
-  templateUrl: './todo-item.component.html',
-  styleUrls: ['./todo-item.component.css'],
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatCheckboxModule,
-    MatIconModule,
+    ReactiveFormsModule,
     MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatTooltipModule
-  ]
+    MatDialogModule
+  ],
+  templateUrl: './todo-item.component.html',
+  styleUrls: ['./todo-item.component.css']
 })
 export class TodoItemComponent {
   @Input() todo!: Todo;
+  @Output() todoDeleted = new EventEmitter<void>();
   @Output() todoUpdated = new EventEmitter<void>();
-  
+
+  editForm: FormGroup;
+  priorities = Object.values(Priority);
   isEditing = false;
-  editTitle = '';
-  editDescription = '';
-  isUpdating = false;
 
   constructor(
+    private fb: FormBuilder,
     private todoService: TodoService,
-    private snackBar: MatSnackBar
-  ) {}
-
-  startEdit(): void {
-    this.isEditing = true;
-    this.editTitle = this.todo.title;
-    this.editDescription = this.todo.description || '';
+    private dialog: MatDialog
+  ) {
+    this.editForm = this.fb.group({
+      title: ['', Validators.required],
+      description: [''],
+      dueDate: [null],
+      priority: [Priority.MEDIUM],
+      category: ['']
+    });
   }
 
-  cancelEdit(): void {
-    this.isEditing = false;
-    this.editTitle = '';
-    this.editDescription = '';
+  ngOnChanges(): void {
+    if (this.todo) {
+      this.editForm.patchValue({
+        title: this.todo.title,
+        description: this.todo.description,
+        dueDate: this.todo.due_date ? new Date(this.todo.due_date).toISOString().slice(0, 16) : null,
+        priority: this.todo.priority,
+        category: this.todo.category
+      });
+    }
   }
 
-  saveEdit(): void {
-    if (this.editTitle.trim() && !this.isUpdating) {
-      this.isUpdating = true;
-      
-      this.todoService.updateTodo(this.todo.id, {
-        title: this.editTitle.trim(),
-        description: this.editDescription.trim() || undefined
-      }).subscribe({
+  toggleEdit(): void {
+    this.isEditing = !this.isEditing;
+  }
+
+  onSave(): void {
+    if (this.editForm.valid) {
+      const formValue = this.editForm.value;
+      const updatedTodo = {
+        ...formValue,
+        due_date: formValue.dueDate ? new Date(formValue.dueDate).toISOString() : null
+      };
+      delete updatedTodo.dueDate;
+
+      this.todoService.updateTodo(this.todo.id!, updatedTodo).subscribe({
         next: () => {
           this.isEditing = false;
-          this.isUpdating = false;
-          this.snackBar.open('Tâche mise à jour!', 'Fermer', { duration: 2000 });
+          this.todoUpdated.emit();
         },
-        error: (error: Error) => {
-          console.error('Erreur mise à jour:', error);
-          this.isUpdating = false;
-          this.snackBar.open('Erreur lors de la mise à jour', 'Fermer', { duration: 3000 });
+        error: (error) => {
+          console.error('Error updating todo:', error);
         }
       });
     }
   }
 
-  toggleCompleted(): void {
-    this.todoService.toggleTodo(this.todo.id, !this.todo.completed).subscribe({
-      next: () => {
-        this.snackBar.open(
-          this.todo.completed ? 'Tâche marquée comme incomplète' : 'Tâche complétée!',
-          'Fermer',
-          { duration: 2000 }
-        );
-      },
-      error: (error: Error) => {
-        console.error('Erreur toggle:', error);
-        this.snackBar.open('Erreur lors de la mise à jour', 'Fermer', { duration: 3000 });
+  onDelete(): void {
+    const dialogRef = this.dialog.open(DeleteConfirmDialog, {
+      width: '400px',
+      data: { title: this.todo.title }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.todoService.deleteTodo(this.todo.id!).subscribe({
+          next: () => {
+            this.todoDeleted.emit();
+          },
+          error: (error) => {
+            console.error('Error deleting todo:', error);
+          }
+        });
       }
     });
   }
 
-  deleteTodo(): void {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette tâche ?')) {
-      this.todoService.deleteTodo(this.todo.id).subscribe({
-        next: () => {
-          this.snackBar.open('Tâche supprimée!', 'Fermer', { duration: 2000 });
-        },
-        error: (error: Error) => {
-          console.error('Erreur suppression:', error);
-          this.snackBar.open('Erreur lors de la suppression', 'Fermer', { duration: 3000 });
-        }
-      });
-    }
+  toggleComplete(): void {
+    this.todoService.updateTodo(this.todo.id!, { completed: !this.todo.completed }).subscribe({
+      next: () => {
+        this.todoUpdated.emit();
+      },
+      error: (error) => {
+        console.error('Error updating todo:', error);
+      }
+    });
   }
+}
+
+@Component({
+  selector: 'delete-confirm-dialog',
+  template: `
+    <h2 mat-dialog-title>Confirmer la suppression</h2>
+    <mat-dialog-content>
+      Êtes-vous sûr de vouloir supprimer la tâche "{{ data.title }}" ?
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button mat-dialog-close>Annuler</button>
+      <button mat-button color="warn" [mat-dialog-close]="true">Supprimer</button>
+    </mat-dialog-actions>
+  `,
+  standalone: true,
+  imports: [CommonModule, MatDialogModule, MatButtonModule]
+})
+export class DeleteConfirmDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { title: string }) {}
 }

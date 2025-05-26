@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [class.dark-theme]="isDarkMode">
     <mat-card-header>
       <mat-card-title>
         <mat-icon>list</mat-icon>
@@ -25,6 +25,16 @@
             </mat-chip-option>
           </mat-chip-listbox>
         </div>
+
+        <!-- Tri -->
+        <mat-form-field class="sort-field">
+          <mat-label>Trier par</mat-label>
+          <mat-select [(value)]="sortBy" (selectionChange)="onSortChange()">
+            <mat-option value="dueDate">Date d'échéance</mat-option>
+            <mat-option value="priority">Priorité</mat-option>
+            <mat-option value="createdAt">Date de création</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
     </mat-card-header>
   
@@ -36,30 +46,20 @@
       </div>
   
       <!-- Liste des todos -->
-      <div *ngIf="!loading" class="todos-container">
-        <div *ngIf="(todos$ | async)?.length === 0" class="empty-state">
-          <mat-icon>inbox</mat-icon>
-          <h3>Aucune tâche trouvée</h3>
-          <p *ngIf="currentFilter === 'all'">Commencez par ajouter votre première tâche !</p>
+      <div *ngIf="!loading" class="todo-list">
+        <div *ngIf="filteredTodos.length === 0" class="no-todos">
+          <p *ngIf="currentFilter === 'all'">Aucune tâche trouvée. Commencez par ajouter votre première tâche !</p>
           <p *ngIf="currentFilter === 'pending'">Toutes vos tâches sont terminées ! 🎉</p>
           <p *ngIf="currentFilter === 'completed'">Aucune tâche terminée pour le moment.</p>
         </div>
   
-        <div *ngIf="(todos$ | async) as todos" class="todo-list">
-          <div *ngFor="let todo of todos" class="todo-item" [class.completed]="todo.completed">
-            <div class="todo-content">
-              <input
-                type="checkbox"
-                [checked]="todo.completed"
-                (change)="onToggleComplete(todo)"
-              />
-              <div class="todo-text">
-                <span class="todo-title">{{ todo.title }}</span>
-                <span *ngIf="todo.description" class="todo-description">{{ todo.description }}</span>
-              </div>
-            </div>
-            <button class="btn btn-danger" (click)="onDelete(todo)">Delete</button>
-          </div>
+        <div *ngIf="filteredTodos.length > 0" class="todos-container">
+          <app-todo-item
+            *ngFor="let todo of filteredTodos"
+            [todo]="todo"
+            (todoDeleted)="todoDeleted.emit()"
+            (todoUpdated)="todoUpdated.emit()"
+          ></app-todo-item>
         </div>
       </div>
     </mat-card-content>
