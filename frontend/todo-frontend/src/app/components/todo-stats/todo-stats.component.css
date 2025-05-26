@@ -1,9 +1,42 @@
 .stats-container {
-  margin-bottom: 16px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
   padding: 16px;
+  border-radius: 4px;
+  background-color: var(--mat-card-background-color);
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--mat-card-subtitle-text-color);
+}
+
+/* Dark mode specific styles */
+:host-context(.dark-theme) {
+  .stat-card {
+    background-color: #424242;
+    color: #ffffff;
+  }
+
+  .stat-label {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .stat-number {
+    color: #ffffff;
+  }
 }
 
 .stats-grid {
@@ -11,17 +44,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-}
-
-.stat-card {
-  flex: 1;
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 12px;
-  transition: all 0.2s ease;
-  min-width: 0;
-  display: flex;
-  align-items: center;
 }
 
 .stat-card:hover {
@@ -77,13 +99,6 @@
   font-weight: 600;
   color: #2c3e50;
   line-height: 1;
-  white-space: nowrap;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #7f8c8d;
-  font-weight: 500;
   white-space: nowrap;
 }
 

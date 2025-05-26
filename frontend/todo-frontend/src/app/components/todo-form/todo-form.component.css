@@ -1,9 +1,10 @@
 .todo-form {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 24px;
-  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--mat-card-background-color);
+  border-radius: 4px;
 }
 
 .form-title {
@@ -21,7 +22,6 @@
 .form-row {
   display: flex;
   gap: 16px;
-  margin-bottom: 16px;
 }
 
 .form-field {
@@ -128,4 +128,27 @@
 .btn-primary:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+/* Dark mode specific styles */
+:host-context(.dark-theme) {
+  .todo-form {
+    background-color: #424242;
+  }
+
+  ::ng-deep {
+    .mat-mdc-form-field {
+      .mat-mdc-text-field-wrapper {
+        background-color: #303030;
+      }
+
+      .mat-mdc-form-field-label {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .mat-mdc-input-element {
+        color: #ffffff;
+      }
+    }
+  }
 }

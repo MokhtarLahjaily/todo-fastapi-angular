@@ -49,4 +49,34 @@
 
   .todo-card {
     margin-top: 20px;
+    background-color: var(--mat-card-background-color);
+  }
+
+  /* Dark mode specific styles */
+  :host-context(.dark-theme) {
+    .todo-card {
+      background-color: #424242;
+    }
+
+    mat-card {
+      background-color: #424242;
+      color: #ffffff;
+    }
+
+    mat-card-title {
+      color: #ffffff;
+    }
+
+    .mat-mdc-card-content {
+      color: #ffffff;
+    }
+
+    mat-toolbar {
+      background-color: #424242;
+      color: #ffffff;
+    }
+
+    .mat-toolbar span {
+      color: #ffffff;
+    }
   }
