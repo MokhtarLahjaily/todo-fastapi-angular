@@ -1,102 +1,369 @@
 /* You can add global styles to this file, and also import other style files */
 @import '@angular/material/prebuilt-themes/indigo-pink.css';
 
+/* Modern UI Variables */
 :root {
-  --primary-color: #4a90e2;
-  --background-color: #f5f5f5;
+  /* Light Theme */
+  --primary-color: #3b82f6;
+  --primary-light: #60a5fa;
+  --primary-dark: #2563eb;
+  --accent-color: #f472b6;
+  --background-color: #f8fafc;
   --card-background: #ffffff;
-  --text-color: #333333;
-  --text-secondary: #666666;
-  --border-color: #dddddd;
+  --text-color: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --hover-color: rgba(0, 0, 0, 0.04);
+  --divider-color: #e2e8f0;
+  --chip-background: #f1f5f9;
+  --chip-text: #1e40af;
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-error: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
 }
 
 .dark-theme {
-  --primary-color: #64b5f6;
-  --background-color: #121212;
-  --card-background: #1e1e1e;
-  --text-color: #ffffff;
-  --text-secondary: #b0b0b0;
-  --border-color: #333333;
+  /* Dark Theme */
+  --primary-color: #60a5fa;
+  --primary-light: #93c5fd;
+  --primary-dark: #3b82f6;
+  --accent-color: #f472b6;
+  --background-color: #0f172a;
+  --card-background: #1e293b;
+  --text-color: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+  --success-color: #34d399;
+  --warning-color: #fbbf24;
+  --error-color: #f87171;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --hover-color: rgba(255, 255, 255, 0.05);
+  --divider-color: #334155;
+  --chip-background: #1e3a8a;
+  --chip-text: #93c5fd;
+  --gradient-primary: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  --gradient-success: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  --gradient-warning: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  --gradient-error: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
 }
 
+/* Global Styles */
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--background-color);
   color: var(--text-color);
+  transition: all 0.3s ease;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.dark-theme .mat-mdc-card {
-  background-color: var(--card-background);
-  color: var(--text-color);
+/* Todo Container */
+.todo-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
 }
 
-.dark-theme .mat-mdc-card-title {
-  color: var(--text-color);
+/* Todo Header */
+.todo-header {
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
-.dark-theme .mat-mdc-card-subtitle {
-  color: var(--text-secondary);
+.todo-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.025em;
+}
+
+/* Filters Container */
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--card-background);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.filters-container:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Form Fields */
+.mat-mdc-form-field {
+  width: 100%;
+  max-width: 300px;
 }
 
 .dark-theme .mat-mdc-form-field {
-  color: var(--text-color);
+  --mdc-filled-text-field-container-color: var(--card-background);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--primary-color);
+  --mdc-filled-text-field-hover-state-layer-color: var(--hover-color);
+  --mdc-filled-text-field-focus-state-layer-color: var(--primary-color);
+  --mdc-filled-text-field-label-text-color: var(--text-secondary);
+  --mdc-filled-text-field-input-text-color: var(--text-color);
+  --mdc-filled-text-field-caret-color: var(--primary-color);
 }
 
-.dark-theme .mat-mdc-form-field-label {
-  color: var(--text-secondary);
+/* Todo Grid */
+.todo-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  padding: 1rem;
 }
 
-.dark-theme .mat-mdc-input-element {
-  color: var(--text-color);
+/* Todo Card */
+.todo-card {
+  background: var(--card-background);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.dark-theme .mat-mdc-select-value {
-  color: var(--text-color);
+.todo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
 }
 
-.dark-theme .mat-mdc-select-arrow {
-  color: var(--text-secondary);
+.todo-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-.dark-theme .mat-mdc-chip {
-  background-color: var(--card-background);
-  color: var(--text-color);
+.todo-card:hover::before {
+  opacity: 1;
 }
 
-.dark-theme .mat-mdc-chip.mat-selected {
-  background-color: var(--primary-color);
+/* Priority Indicators */
+.priority-indicator {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px;
+}
+
+.priority-high { background: var(--gradient-error); }
+.priority-medium { background: var(--gradient-warning); }
+.priority-low { background: var(--gradient-success); }
+
+/* Action Buttons */
+.action-buttons {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 0.75rem;
+  opacity: 1;
+  z-index: 2;
+}
+
+.todo-card:hover .action-buttons {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-8px);
+}
+
+.action-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 2px solid transparent;
+  background: var(--card-background);
+  box-shadow: var(--shadow-md);
+}
+
+.action-button mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  transition: all 0.2s ease;
+}
+
+.action-button.edit {
+  color: var(--primary-light);
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--primary-light);
+}
+
+.action-button.delete {
+  color: var(--error-color);
+  background: rgba(239, 68, 68, 0.15);
+  border-color: var(--error-color);
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Add Todo Button */
+.add-todo-fab {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--gradient-primary);
   color: white;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s ease;
 }
 
-.dark-theme .mat-mdc-toolbar {
-  background-color: var(--card-background);
-  color: var(--text-color);
+.add-todo-fab:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: var(--shadow-lg);
 }
 
-.dark-theme .mat-mdc-dialog-container {
-  background-color: var(--card-background);
-  color: var(--text-color);
+/* Empty State */
+.no-todos {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--card-background);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-md);
+  margin: 2rem 0;
+  border: 1px solid var(--border-color);
 }
 
-.dark-theme .mat-mdc-dialog-title {
-  color: var(--text-color);
-}
-
-.dark-theme .mat-mdc-dialog-content {
+.no-todos mat-icon {
+  font-size: 4rem;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1.5rem;
   color: var(--text-secondary);
+  opacity: 0.5;
 }
 
-.dark-theme .mat-mdc-button {
-  color: var(--text-color);
+.no-todos p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0;
 }
 
-.dark-theme .mat-mdc-button.mat-warn {
-  color: #f44336;
+/* Loading State */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem;
 }
 
-.dark-theme .mat-mdc-progress-spinner circle {
-  stroke: var(--primary-color);
+/* Responsive Design */
+@media (max-width: 768px) {
+  .todo-container {
+    margin: 1rem auto;
+  }
+
+  .todo-header h2 {
+    font-size: 2rem;
+  }
+
+  .filters-container {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .mat-mdc-form-field {
+    max-width: 100%;
+  }
+
+  .todo-grid {
+    grid-template-columns: 1fr;
+    padding: 0.5rem;
+  }
+
+  .add-todo-fab {
+    bottom: 1rem;
+    right: 1rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-in {
+  animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
 }
 
 /* Reset et styles de base */
@@ -153,12 +420,8 @@ body {
 
 /* Styles globaux */
 :root {
-  --success-color: #2ecc71;
-  --warning-color: #f1c40f;
-  --danger-color: #e74c3c;
   --bg-color: #ffffff;
   --bg-secondary: #f8f9fa;
-  --shadow-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Styles pour les notifications */
@@ -168,7 +431,7 @@ body {
 }
 
 .snackbar-error {
-  background-color: var(--danger-color);
+  background-color: var(--error-color);
   color: white;
 }
 
@@ -216,7 +479,7 @@ body {
 
 /* Styles pour les boutons en mode sombre */
 .dark-theme .btn-danger {
-  background-color: var(--danger-color);
+  background-color: var(--error-color);
   color: white;
 }
 
@@ -319,33 +582,33 @@ body {
 
 /* Dark theme for dialog */
 .dark-theme .mat-mdc-dialog-container {
-  --mdc-dialog-container-color: #424242;
-  color: white;
+  --mdc-dialog-container-color: var(--card-background);
+  color: var(--text-color);
 }
 
 .dark-theme .mat-mdc-dialog-container .mat-mdc-dialog-title {
-  color: white;
+  color: var(--text-color);
 }
 
 .dark-theme .mat-mdc-dialog-container .mat-mdc-form-field {
-  color: white;
+  color: var(--text-color);
 }
 
 .dark-theme .mat-mdc-dialog-container .mat-mdc-form-field-label {
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: var(--text-secondary) !important;
 }
 
 .dark-theme .mat-mdc-dialog-container .mat-mdc-input-element {
-  color: white !important;
-  caret-color: var(--primary-color, #64b5f6) !important;
+  color: var(--text-color) !important;
+  caret-color: var(--primary-color) !important;
 }
 
 .dark-theme .mat-mdc-dialog-container .mat-mdc-select-value {
-  color: white !important;
+  color: var(--text-color) !important;
 }
 
 .dark-theme .mat-mdc-dialog-container .mat-mdc-select-arrow {
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: var(--text-secondary) !important;
 }
 
 .dark-theme .mat-mdc-dialog-container .mat-mdc-text-field-wrapper {
@@ -354,4 +617,234 @@ body {
 
 .dark-theme .mat-mdc-dialog-container .mat-mdc-form-field-flex {
   background-color: transparent !important;
+}
+
+/* Form field styles */
+.dark-theme .mat-mdc-form-field {
+  --mdc-filled-text-field-container-color: var(--card-background);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--primary-color);
+  --mdc-filled-text-field-hover-state-layer-color: var(--hover-color);
+  --mdc-filled-text-field-focus-state-layer-color: var(--primary-color);
+  --mdc-filled-text-field-label-text-color: var(--text-secondary);
+  --mdc-filled-text-field-input-text-color: var(--text-color);
+  --mdc-filled-text-field-caret-color: var(--primary-color);
+  --mdc-filled-text-field-active-indicator-color: var(--border-color);
+  --mdc-filled-text-field-disabled-active-indicator-color: var(--border-color);
+  --mdc-filled-text-field-disabled-container-color: var(--card-background);
+  --mdc-filled-text-field-disabled-label-text-color: var(--text-secondary);
+  --mdc-filled-text-field-disabled-input-text-color: var(--text-secondary);
+}
+
+.dark-theme .mat-mdc-select {
+  --mdc-filled-text-field-container-color: var(--card-background);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--primary-color);
+  --mdc-filled-text-field-hover-state-layer-color: var(--hover-color);
+  --mdc-filled-text-field-focus-state-layer-color: var(--primary-color);
+  --mdc-filled-text-field-label-text-color: var(--text-secondary);
+  --mdc-filled-text-field-input-text-color: var(--text-color);
+}
+
+/* Filter and sort fields */
+.dark-theme .filter-field,
+.dark-theme .sort-field {
+  --mdc-filled-text-field-container-color: var(--card-background);
+  --mdc-filled-text-field-focus-active-indicator-color: var(--primary-color);
+  --mdc-filled-text-field-hover-state-layer-color: var(--hover-color);
+  --mdc-filled-text-field-focus-state-layer-color: var(--primary-color);
+  --mdc-filled-text-field-label-text-color: var(--text-secondary);
+  --mdc-filled-text-field-input-text-color: var(--text-color);
+}
+
+/* Task grid styles */
+.dark-theme .todo-grid {
+  background-color: var(--background-color);
+}
+
+.dark-theme .todo-container {
+  background-color: var(--background-color);
+}
+
+/* Empty State */
+.dark-theme .no-todos {
+  background-color: var(--card-background);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.dark-theme .no-todos mat-icon {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.dark-theme .no-todos p {
+  color: var(--text-secondary);
+}
+
+/* Select Value and Arrow */
+.dark-theme .mat-mdc-select-value {
+  color: var(--text-color) !important;
+}
+
+.dark-theme .mat-mdc-select-arrow {
+  color: var(--text-secondary) !important;
+}
+
+/* Form Field Background */
+.dark-theme .mat-mdc-text-field-wrapper {
+  background-color: var(--card-background) !important;
+}
+
+.dark-theme .mat-mdc-form-field-flex {
+  background-color: var(--card-background) !important;
+}
+
+/* Select Panel Background */
+.dark-theme .mat-mdc-select-panel {
+  background-color: var(--card-background) !important;
+}
+
+.dark-theme .mat-mdc-select-panel .mat-mdc-option {
+  background-color: var(--card-background) !important;
+}
+
+/* Filters Container */
+.dark-theme .filters-container {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+}
+
+/* Loading Spinner */
+.dark-theme .mat-mdc-progress-spinner circle {
+  stroke: var(--primary-color);
+}
+
+/* Action Buttons Container */
+.dark-theme .action-buttons {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 0.75rem;
+  opacity: 1;
+  z-index: 2;
+}
+
+.dark-theme .todo-card:hover .action-buttons {
+  opacity: 1;
+  transform: translateY(-50%) translateX(-8px);
+}
+
+/* Action Button Base */
+.dark-theme .action-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 2px solid transparent;
+  background: var(--card-background);
+  box-shadow: var(--shadow-md);
+}
+
+.dark-theme .action-button mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  transition: all 0.2s ease;
+}
+
+/* Edit Button */
+.dark-theme .action-button.edit {
+  color: var(--primary-light);
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--primary-light);
+}
+
+.dark-theme .action-button.edit:hover {
+  background: rgba(59, 130, 246, 0.25);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.dark-theme .action-button.edit:active {
+  transform: translateY(0);
+  background: rgba(59, 130, 246, 0.3);
+}
+
+/* Delete Button */
+.dark-theme .action-button.delete {
+  color: var(--error-color);
+  background: rgba(239, 68, 68, 0.15);
+  border-color: var(--error-color);
+}
+
+.dark-theme .action-button.delete:hover {
+  background: rgba(239, 68, 68, 0.25);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.dark-theme .action-button.delete:active {
+  transform: translateY(0);
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* Button Tooltips */
+.dark-theme .action-button::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  background: var(--card-background);
+  color: var(--text-color);
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  z-index: 10;
+}
+
+.dark-theme .action-button:hover::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* Focus States */
+.dark-theme .action-button:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+/* Disabled State */
+.dark-theme .action-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  border-color: var(--text-secondary);
+}
+
+/* Todo Card Adjustments */
+.dark-theme .todo-card {
+  position: relative;
+  padding-right: 120px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-theme .todo-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }

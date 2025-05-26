@@ -1,8 +1,8 @@
-<div class="todo-container">
+<div class="todo-container scale-in" [class.dark-theme]="isDarkMode">
   <div class="todo-header">
-    <h2>Mes tâches</h2>
-    <div class="filters">
-      <mat-form-field appearance="outline" class="filter-field">
+    <h2 class="fade-in">Mes tâches</h2>
+    <div class="filters-container fade-in">
+      <mat-form-field class="filter-field" appearance="fill">
         <mat-label>Filtrer</mat-label>
         <mat-select [(ngModel)]="currentFilter" (selectionChange)="onFilterChange($event.value)">
           <mat-option value="all">Toutes</mat-option>
@@ -11,7 +11,7 @@
         </mat-select>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="sort-field">
+      <mat-form-field class="sort-field" appearance="fill">
         <mat-label>Trier par</mat-label>
         <mat-select [(ngModel)]="sortValue" (selectionChange)="onSortChange()">
           <mat-option *ngFor="let option of sortOptions" [value]="option.value">
@@ -23,27 +23,29 @@
   </div>
 
   <div class="todo-grid">
-    <div *ngIf="loading" class="loading-container">
+    <div *ngIf="loading" class="loading-container scale-in">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
 
     <ng-container *ngIf="!loading">
-      <div *ngIf="filteredTodos.length === 0" class="no-todos">
+      <div *ngIf="filteredTodos.length === 0" class="no-todos scale-in">
         <mat-icon>assignment</mat-icon>
         <p>Aucune tâche trouvée. Commencez par ajouter votre première tâche !</p>
       </div>
 
       <app-todo-item
-        *ngFor="let todo of filteredTodos"
+        *ngFor="let todo of filteredTodos; let i = index"
         [todo]="todo"
         (todoDeleted)="onTodoDeleted()"
-        (todoUpdated)="onTodoUpdated()">
+        (todoUpdated)="onTodoUpdated()"
+        class="fade-in"
+        [style.animation-delay]="i * 0.1 + 's'">
       </app-todo-item>
     </ng-container>
   </div>
 </div>
 
 <!-- Bouton d'ajout -->
-<button mat-fab color="primary" class="add-todo-fab" (click)="toggleForm()" matTooltip="Ajouter une tâche">
+<button mat-fab color="primary" class="add-todo-fab scale-in" (click)="toggleForm()" matTooltip="Ajouter une tâche">
   <mat-icon>add</mat-icon>
 </button>
