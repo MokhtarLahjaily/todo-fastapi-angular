@@ -11,3 +11,6 @@ class Todo(Base):
     completed = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_editing = Column(Boolean, default=False, nullable=False)
+    last_modified_by = Column(String(50), nullable=True)
+    version = Column(Integer, default=1, nullable=False)

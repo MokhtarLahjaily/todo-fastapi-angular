@@ -5,6 +5,14 @@
 
 <!-- Main Content -->
 <div class="container">
+  <mat-toolbar>
+    <span>Todo App</span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="toggleTheme()" matTooltip="Changer le thème">
+      <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+  </mat-toolbar>
+
   <mat-card class="todo-card">
     <mat-card-header>
       <mat-card-title>Todo List</mat-card-title>
@@ -20,8 +28,20 @@
       <app-todo-list
         [todos]="todos"
         (toggleComplete)="onToggleComplete($event)"
-        (delete)="onDeleteTodo($event)">
+        (delete)="onDelete($event)">
       </app-todo-list>
     </mat-card-content>
   </mat-card>
 </div>
+
+<!-- Boîte de dialogue de confirmation -->
+<ng-template #deleteDialog>
+  <h2 mat-dialog-title>Confirmer la suppression</h2>
+  <mat-dialog-content>
+    Êtes-vous sûr de vouloir supprimer cette tâche ?
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Annuler</button>
+    <button mat-button color="warn" [mat-dialog-close]="true">Supprimer</button>
+  </mat-dialog-actions>
+</ng-template>

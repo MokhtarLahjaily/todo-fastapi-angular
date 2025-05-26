@@ -55,3 +55,134 @@ body {
 .fade-in-up {
   animation: fadeInUp 0.3s ease-out;
 }
+
+/* Styles globaux */
+:root {
+  --primary-color: #3498db;
+  --success-color: #2ecc71;
+  --warning-color: #f1c40f;
+  --danger-color: #e74c3c;
+  --text-color: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --bg-color: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --border-color: #e9ecef;
+  --shadow-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Mode sombre */
+.dark-theme {
+  --primary-color: #3498db;
+  --success-color: #2ecc71;
+  --warning-color: #f1c40f;
+  --danger-color: #e74c3c;
+  --text-color: #ecf0f1;
+  --text-secondary: #bdc3c7;
+  --bg-color: #2c3e50;
+  --bg-secondary: #34495e;
+  --border-color: #465c71;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Styles pour les notifications */
+.snackbar-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.snackbar-error {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.snackbar-info {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.snackbar-warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+/* Styles pour les composants Material en mode sombre */
+.dark-theme .mat-mdc-card {
+  background-color: var(--bg-secondary);
+  color: var(--text-color);
+}
+
+.dark-theme .mat-mdc-form-field {
+  color: var(--text-color);
+}
+
+.dark-theme .mat-mdc-text-field-wrapper {
+  background-color: var(--bg-color) !important;
+}
+
+.dark-theme .mat-mdc-form-field-label {
+  color: var(--text-secondary) !important;
+}
+
+.dark-theme .mat-mdc-input-element {
+  color: var(--text-color) !important;
+}
+
+.dark-theme .mat-mdc-chip {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+.dark-theme .mat-mdc-chip.mat-selected {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+/* Styles pour les boutons en mode sombre */
+.dark-theme .btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.dark-theme .btn-danger:hover {
+  background-color: #c0392b;
+}
+
+/* Styles pour les icônes en mode sombre */
+.dark-theme mat-icon {
+  color: var(--text-color);
+}
+
+/* Styles pour les états vides en mode sombre */
+.dark-theme .empty-state {
+  background-color: var(--bg-secondary);
+  color: var(--text-color);
+}
+
+.dark-theme .empty-state mat-icon {
+  color: var(--text-secondary);
+}
+
+/* Styles pour les éléments de liste en mode sombre */
+.dark-theme .todo-item {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-theme .todo-title {
+  color: var(--text-color);
+}
+
+.dark-theme .todo-description {
+  color: var(--text-secondary);
+}
+
+.dark-theme .completed .todo-title,
+.dark-theme .completed .todo-description {
+  color: var(--text-secondary);
+}

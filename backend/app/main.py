@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from . import crud, models, schemas
 from .database import SessionLocal, engine, get_db
+from datetime import datetime
 
 # Créer les tables dans la base de données
 models.Base.metadata.create_all(bind=engine)
@@ -15,13 +16,13 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configuration CORS pour permettre les requêtes depuis Angular
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200", "http://127.0.0.1:4200"],  # URL d'Angular
+    allow_origins=["http://localhost:4200"],  # Frontend URL
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 
 # ===================================
@@ -59,7 +60,7 @@ def read_todo(todo_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Todo introuvable")
     return db_todo
 
-@app.post("/todos/", response_model=schemas.TodoResponse, status_code=201)
+@app.post("/todos/", response_model=schemas.TodoResponse, status_code=status.HTTP_201_CREATED)
 def create_todo(todo: schemas.TodoCreate, db: Session = Depends(get_db)):
     """Créer un nouveau todo"""
     return crud.create_todo(db=db, todo=todo)
@@ -67,11 +68,11 @@ def create_todo(todo: schemas.TodoCreate, db: Session = Depends(get_db)):
 @app.put("/todos/{todo_id}", response_model=schemas.TodoResponse)
 def update_todo(
     todo_id: int, 
-    todo_update: schemas.TodoUpdate, 
+    todo: schemas.TodoUpdate, 
     db: Session = Depends(get_db)
 ):
     """Mettre à jour un todo existant"""
-    db_todo = crud.update_todo(db, todo_id=todo_id, todo_update=todo_update)
+    db_todo = crud.update_todo(db, todo_id=todo_id, todo=todo)
     if db_todo is None:
         raise HTTPException(status_code=404, detail="Todo introuvable")
     return db_todo
@@ -79,22 +80,22 @@ def update_todo(
 @app.patch("/todos/{todo_id}", response_model=schemas.TodoResponse)
 def patch_todo(
     todo_id: int, 
-    todo_update: schemas.TodoUpdate, 
+    todo: schemas.TodoUpdate, 
     db: Session = Depends(get_db)
 ):
     """Mettre à jour partiellement un todo existant"""
-    db_todo = crud.update_todo(db, todo_id=todo_id, todo_update=todo_update)
+    db_todo = crud.update_todo(db, todo_id=todo_id, todo=todo)
     if db_todo is None:
         raise HTTPException(status_code=404, detail="Todo introuvable")
     return db_todo
 
-@app.delete("/todos/{todo_id}")
+@app.delete("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_todo(todo_id: int, db: Session = Depends(get_db)):
     """Supprimer un todo"""
     success = crud.delete_todo(db, todo_id=todo_id)
     if not success:
         raise HTTPException(status_code=404, detail="Todo introuvable")
-    return {"message": "Todo supprimé avec succès"}
+    return None
 
 @app.get("/todos/stats/summary")
 def get_todos_stats(db: Session = Depends(get_db)):
@@ -109,3 +110,12 @@ def get_todos_stats(db: Session = Depends(get_db)):
         "pending": pending_todos,
         "completion_rate": round((completed_todos / total_todos * 100) if total_todos > 0 else 0, 2)
     }
+
+@app.patch("/todos/{todo_id}/edit", response_model=schemas.TodoResponse)
+def toggle_edit_todo(todo_id: int, edit: schemas.TodoEdit, db: Session = Depends(get_db)):
+    db_todo = crud.get_todo(db, todo_id=todo_id)
+    if db_todo is None:
+        raise HTTPException(status_code=404, detail="Tâche non trouvée")
+    if edit.is_editing and db_todo.is_editing and db_todo.last_modified_by != edit.last_modified_by:
+        raise HTTPException(status_code=409, detail="La tâche est déjà en cours d'édition")
+    return crud.update_todo_edit_state(db=db, todo_id=todo_id, edit=edit)

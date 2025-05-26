@@ -14,11 +14,21 @@ class TodoUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=100)
     description: Optional[str] = Field(None, max_length=500)
     completed: Optional[bool] = None
+    is_editing: Optional[bool] = None
+    last_modified_by: Optional[str] = None
+    version: Optional[int] = None
+
+class TodoEdit(BaseModel):
+    is_editing: bool = Field(..., description="État d'édition de la tâche")
+    last_modified_by: Optional[str] = Field(None, description="Identifiant de l'utilisateur qui modifie")
 
 class TodoResponse(TodoBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
+    is_editing: bool = False
+    last_modified_by: Optional[str] = None
+    version: int = 1
     
     class Config:
         from_attributes = True
